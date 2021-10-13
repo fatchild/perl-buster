@@ -55,3 +55,6 @@ This is by far the best resource for word lists I have found so far.
 [ ] - Threading   
 [x] - Use HEAD instead of GET requests - dcx86r   
 [ ] - "I would also suggest looking at Mojo::UserAgent, async/promises are nice to have when you start wanting to manage concurrent requests and waiting for responses." - dcx86r   
+[ ] - "configure timeouts. I think the default is something like 120 seconds, which is probably too long." - BitterMartian   
+[ ] - "configure an optional pause between two failed checks. Some security filters will see three or bad requests (400, 403, 404) within 15 minutes of each other and block the IP from connecting." - BitterMartian   
+[ ] - "configure the user agent so that it's something other than the default (but please don't use one from a real web browser, though I imagine you might want an option to change it for proper pen testing)." - BitterMartian
