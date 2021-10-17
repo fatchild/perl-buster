@@ -34,6 +34,7 @@ FLAGS:
     -t,     time between requests, make process quieter
     -o,     relative path to output file
     -q,     quiet mode, no responses printed to console
+    -p,     specify the port number to make requests to, default is 80
 HELP
 
 exit;
@@ -74,10 +75,17 @@ sub write_to_file {
     close($fh);
 }
 
+sub set_port {
+    my ($port, $url_string) = @_;
+
+    die "A port should be an integer. e.g. -p 80 is default -p 443 is https, -p 8080 may be a test size or API." if $port !~ m/^\d+$/ or $port > 65535;
+    return $url_string.":".$port;
+}
+
 
 # OPTIONS
 my %options = ();
-getopts("hu:w:t:o:q", \%options);
+getopts("hu:w:t:o:qp:", \%options);
 
 get_help() if defined $options{h};
 my $url         = get_absolute_URL($options{u}) if defined $options{u} || die "Please use the -u flag to pass in a URL. Use -h for help.\n";
@@ -85,6 +93,7 @@ my $wordlist    = read_wordlist($options{w}) if defined $options{w} || die "Plea
 my $sleeptime   = defined $options{t} ? $options{t} : 1;
 my $output_loc  = $options{o} if defined $options{o};
 my $quiet_mode  = $options{q} if defined $options{q};
+$url            = set_port($options{p}, $url) if defined $options{p};
 
 
 # MAIN
