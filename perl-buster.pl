@@ -39,13 +39,20 @@ FLAGS:
     -r,     specify the reponse codes separated by commas, 
                 e.g. 2,3,4 this will return all 200-499 response codes
                 e.g. 202,3,404 this will return 202, 300-399 and 404
+    -g,     use GET request instead of HEAD request
+    -a,     set the name of the user agent e.g. AppId/AppVersionId, by default this is libwww-perl/#.###
 HELP
 
 exit;
 }
 
 sub get_browser {
-    return LWP::UserAgent->new || die $!;
+    my ($user_defined_ua) = @_;
+
+    my $userAgent =  LWP::UserAgent->new || die $!;
+    $userAgent->agent($user_defined_ua) if defined $user_defined_ua;
+
+    return $userAgent;
 }
 
 sub read_wordlist {
@@ -113,7 +120,7 @@ sub set_response_codes {
 
 # OPTIONS
 my %options = ();
-getopts("hu:w:t:o:qp:er:g", \%options);
+getopts("hu:w:t:o:qp:er:ga:", \%options);
 
 get_help() if defined $options{h};
 my $url             = get_absolute_URL($options{u}) if defined $options{u} || die "Please use the -u flag to pass in a URL. Use -h for help.\n";
@@ -125,10 +132,10 @@ $url                = set_port($options{p}, $url) if defined $options{p};
 $url                = set_https($url) if defined $options{e};
 my $response_codes  = defined $options{r} ? set_response_codes($options{r}) : "^2";
 my $method          = defined $options{g} ? "GET" : "HEAD";
-
+my $agent           = $options{a} if defined $options{a};
 
 # MAIN
-my $browser     = get_browser();
+my $browser     = get_browser($agent);
 my $startTime   = time;
 
 while ( <$wordlist> ) {
