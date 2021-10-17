@@ -51,7 +51,7 @@ This is by far the best resource for word lists I have found so far.
 
 [x] - Port support with default being 80  
 [x] - Specify https if needed
-[ ] - Ability to add accepted http response codes  
+[x] - Ability to add accepted http response codes  
 [ ] - Cookies  
 [ ] - Threading   
 [x] - Use HEAD instead of GET requests - dcx86r   

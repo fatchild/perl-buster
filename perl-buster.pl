@@ -56,9 +56,16 @@ sub read_wordlist {
 }
 
 sub get_response_code {
-    my ($url, $browser) = @_;
+    my ($url, $browser, $method) = @_;
 
-    my $response = $browser->head($url);
+    my $response;
+    if ( $method eq "HEAD" ) {
+        $response = $browser->head($url);
+    }
+    elsif ( $method eq "GET" ) {
+        $response = $browser->get($url);
+    }
+    
     return $response->{_rc};
 }
 
@@ -106,7 +113,7 @@ sub set_response_codes {
 
 # OPTIONS
 my %options = ();
-getopts("hu:w:t:o:qp:er:", \%options);
+getopts("hu:w:t:o:qp:er:g", \%options);
 
 get_help() if defined $options{h};
 my $url             = get_absolute_URL($options{u}) if defined $options{u} || die "Please use the -u flag to pass in a URL. Use -h for help.\n";
@@ -117,6 +124,7 @@ my $quiet_mode      = $options{q} if defined $options{q};
 $url                = set_port($options{p}, $url) if defined $options{p};
 $url                = set_https($url) if defined $options{e};
 my $response_codes  = defined $options{r} ? set_response_codes($options{r}) : "^2";
+my $method          = defined $options{g} ? "GET" : "HEAD";
 
 
 # MAIN
@@ -126,7 +134,7 @@ my $startTime   = time;
 while ( <$wordlist> ) {
 
     my $full_url = $url."/".$_;
-    my $rc = get_response_code($full_url, $browser);
+    my $rc = get_response_code($full_url, $browser, $method);
 
     if ( $rc =~ /$response_codes/ ) {
         print STDOUT $rc, " -> ", $full_url if not defined $quiet_mode;
