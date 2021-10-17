@@ -35,6 +35,7 @@ FLAGS:
     -o,     relative path to output file
     -q,     quiet mode, no responses printed to console
     -p,     specify the port number to make requests to, default is 80
+    -e,     use HTTPS instead of the default HTTP protocol
 HELP
 
 exit;
@@ -61,7 +62,7 @@ sub get_response_code {
 sub get_absolute_URL {
     my ($url_arg) = @_;
 
-    if ( $url_arg !~ m/http:\/\// ) {
+    if ( $url_arg !~ m/^http:\/\/|^https:\/\// ) {
         $url_arg = "http://".$url_arg;
     }
     return $url_arg;
@@ -82,10 +83,17 @@ sub set_port {
     return $url_string.":".$port;
 }
 
+sub set_https {
+    my ($url_string) = @_;
+
+    substr($url_string, 4, 0) = 's';
+    return $url_string;
+}
+
 
 # OPTIONS
 my %options = ();
-getopts("hu:w:t:o:qp:", \%options);
+getopts("hu:w:t:o:qp:e", \%options);
 
 get_help() if defined $options{h};
 my $url         = get_absolute_URL($options{u}) if defined $options{u} || die "Please use the -u flag to pass in a URL. Use -h for help.\n";
@@ -94,6 +102,7 @@ my $sleeptime   = defined $options{t} ? $options{t} : 1;
 my $output_loc  = $options{o} if defined $options{o};
 my $quiet_mode  = $options{q} if defined $options{q};
 $url            = set_port($options{p}, $url) if defined $options{p};
+$url            = set_https($url) if defined $options{e};
 
 
 # MAIN
