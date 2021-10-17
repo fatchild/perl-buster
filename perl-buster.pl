@@ -36,6 +36,9 @@ FLAGS:
     -q,     quiet mode, no responses printed to console
     -p,     specify the port number to make requests to, default is 80
     -e,     use HTTPS instead of the default HTTP protocol
+    -r,     specify the reponse codes separated by commas, 
+                e.g. 2,3,4 this will return all 200-499 response codes
+                e.g. 202,3,404 this will return 202, 300-399 and 404
 HELP
 
 exit;
@@ -90,19 +93,30 @@ sub set_https {
     return $url_string;
 }
 
+sub set_response_codes {
+    my ($user_defined_codes) = @_;
+
+    $user_defined_codes =~ s/,$//;
+    $user_defined_codes =~ s/(\d),/$1|^/g;
+    substr($user_defined_codes, 0, 0) = "^";
+
+    return $user_defined_codes;
+}
+
 
 # OPTIONS
 my %options = ();
-getopts("hu:w:t:o:qp:e", \%options);
+getopts("hu:w:t:o:qp:er:", \%options);
 
 get_help() if defined $options{h};
-my $url         = get_absolute_URL($options{u}) if defined $options{u} || die "Please use the -u flag to pass in a URL. Use -h for help.\n";
-my $wordlist    = read_wordlist($options{w}) if defined $options{w} || die "Please use the -w flag and pass in a path to a wordlist. Use -h for help.\n";
-my $sleeptime   = defined $options{t} ? $options{t} : 1;
-my $output_loc  = $options{o} if defined $options{o};
-my $quiet_mode  = $options{q} if defined $options{q};
-$url            = set_port($options{p}, $url) if defined $options{p};
-$url            = set_https($url) if defined $options{e};
+my $url             = get_absolute_URL($options{u}) if defined $options{u} || die "Please use the -u flag to pass in a URL. Use -h for help.\n";
+my $wordlist        = read_wordlist($options{w}) if defined $options{w} || die "Please use the -w flag and pass in a path to a wordlist. Use -h for help.\n";
+my $sleeptime       = defined $options{t} ? $options{t} : 1;
+my $output_loc      = $options{o} if defined $options{o};
+my $quiet_mode      = $options{q} if defined $options{q};
+$url                = set_port($options{p}, $url) if defined $options{p};
+$url                = set_https($url) if defined $options{e};
+my $response_codes  = defined $options{r} ? set_response_codes($options{r}) : "^2";
 
 
 # MAIN
@@ -114,9 +128,9 @@ while ( <$wordlist> ) {
     my $full_url = $url."/".$_;
     my $rc = get_response_code($full_url, $browser);
 
-    if ( $rc =~ /^2/ ) {
+    if ( $rc =~ /$response_codes/ ) {
         print STDOUT $rc, " -> ", $full_url if not defined $quiet_mode;
-        write_to_file($output_loc, $full_url) if defined $output_loc;
+        write_to_file($output_loc, "[".$rc."] ".$full_url) if defined $output_loc;
     }
 
     sleep($sleeptime);
