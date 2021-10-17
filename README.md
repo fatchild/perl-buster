@@ -50,7 +50,7 @@ This is by far the best resource for word lists I have found so far.
 # TODO
 
 [x] - Port support with default being 80  
-[x] - Specify https if needed
+[x] - Specify https if needed   
 [x] - Ability to add accepted http response codes  
 [ ] - Cookies  
 [ ] - Threading   
