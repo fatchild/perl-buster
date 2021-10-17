@@ -58,6 +58,6 @@ This is by far the best resource for word lists I have found so far.
 [ ] - "I would also suggest looking at Mojo::UserAgent, async/promises are nice to have when you start wanting to manage concurrent requests and waiting for responses." - dcx86r (reddit)   
 [ ] - "configure timeouts. I think the default is something like 120 seconds, which is probably too long." - BitterMartian (reddit)   
 [ ] - "configure an optional pause between two failed checks. Some security filters will see three or bad requests (400, 403, 404) within 15 minutes of each other and block the IP from connecting." - BitterMartian (reddit)   
-[ ] - "configure the user agent so that it's something other than the default (but please don't use one from a real web browser, though I imagine you might want an option to change it for proper pen testing)." - BitterMartian (reddit)   
+[x] - "configure the user agent so that it's something other than the default (but please don't use one from a real web browser, though I imagine you might want an option to change it for proper pen testing)." - BitterMartian (reddit)   
 [x] - Make GET / HEAD options "I disagree. Sometimes a server will respond to GET requests but not HEAD requests. (I've run into these in the wild.) So you might want to make that an option." - BitterMartian (reddit)   
 [ ] - "Great work! Another suggestion - unless you need the full monte of LWP functionality, consider using HTTP::Tiny instead - it's significantly faster (and is also a core module!)" - allegedrc4 (reddit)
