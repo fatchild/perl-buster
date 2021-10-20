@@ -64,3 +64,4 @@ This is by far the best resource for word lists I have found so far.
 [ ] - Implement unit testing   
 [ ] - Automated testing   
 [ ] - Move options up  
+[ ] - Update Examples for each new feature / argument   
